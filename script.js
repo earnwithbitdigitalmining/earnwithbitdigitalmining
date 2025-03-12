@@ -12,27 +12,30 @@ fetch(pingUrl, pingOptions)
   .then(res => res.json())
   .then(json => {
     console.log('Ping API response:', json);
+    // You can add additional logic here, such as updating a UI element
   })
   .catch(err => console.error('Ping API error:', err));
 
 
-// --- Fetching Crypto Prices for the Quotation Section ---
+// --- Example: Fetching Crypto Prices for the Quotation Section ---
 const quotationList = document.getElementById("quotation-list");
 
+// Replace with your actual crypto API endpoint if different
 const cryptoApiUrl = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin,ethereum,tether&vs_currencies=usd&include_24hr_change=true";
-
-const cryptoImages = {
-  bitcoin: "https://cryptologos.cc/logos/bitcoin-btc-logo.png",
-  ethereum: "https://cryptologos.cc/logos/ethereum-eth-logo.png",
-  tether: "https://cryptologos.cc/logos/tether-usdt-logo.png"
-};
 
 function fetchCryptoPrices() {
   fetch(cryptoApiUrl)
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Crypto API Error: ${response.status}`);
+      }
+      return response.json();
+    })
     .then(data => {
+      // Clear existing list items
       quotationList.innerHTML = "";
 
+      // Build new list items for BTC, ETH, USDT
       const coins = [
         { name: "BTC", key: "bitcoin" },
         { name: "ETH", key: "ethereum" },
@@ -46,14 +49,9 @@ function fetchCryptoPrices() {
         const listItem = document.createElement("li");
 
         listItem.innerHTML = `
-          <div class="coin-item">
-            <img src="${cryptoImages[coin.key]}" alt="${coin.name}" class="coin-image">
-            <div class="coin-info">
-              <div class="coin-name">${coin.name}</div>
-              <div class="coin-price">$${price.toLocaleString()}</div>
-              <div class="coin-change ${changeClass}">${change.toFixed(2)}%</div>
-            </div>
-          </div>
+          <div class="coin-name">${coin.name}</div>
+          <div class="coin-price">$${price.toLocaleString()}</div>
+          <div class="coin-change ${changeClass}">${change.toFixed(2)}%</div>
         `;
         quotationList.appendChild(listItem);
       });
@@ -65,7 +63,7 @@ function fetchCryptoPrices() {
 }
 
 
-// --- Fetching Recent Transactions for the Revenue Section ---
+// --- Example: Fetching Recent Transactions for the Revenue Section ---
 const revenueTableBody = document.getElementById("revenue-table-body");
 
 // Replace with your actual revenue/transactions API endpoint
@@ -80,8 +78,10 @@ function fetchRevenueData() {
       return response.json();
     })
     .then(data => {
+      // Clear existing rows
       revenueTableBody.innerHTML = "";
 
+      // Populate table rows
       data.forEach(entry => {
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -101,18 +101,9 @@ function fetchRevenueData() {
 
 // --- Event Listener for DOM Content Loaded ---
 document.addEventListener("DOMContentLoaded", () => {
+  // Call API functions on page load
   fetchCryptoPrices();
   fetchRevenueData();
-listItem.innerHTML = `
-  <div class="coin-item">
-    <img src="${cryptoImages[coin.key]}" alt="${coin.name}" class="coin-image">
-    <div class="coin-info">
-      <div class="coin-name">${coin.name}</div>
-      <div class="coin-price">$${price.toLocaleString()}</div>
-      <div class="coin-change ${changeClass}">${change.toFixed(2)}%</div>
-    </div>
-  </div>
-`;
 
   // Optionally, refresh data periodically:
   // setInterval(fetchCryptoPrices, 60000); // Refresh every 60 seconds

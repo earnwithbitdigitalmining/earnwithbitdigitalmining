@@ -1,102 +1,190 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Crypto Finance Dashboard</title>
-  <link rel="stylesheet" href="dashboard.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bit-Digital Mining</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+        .header {
+            font-size: 18px;
+            font-weight: bold;
+            padding: 10px;
+            background: #333;
+            border-radius: 5px;
+        }
+        .user-info {
+            background: #333;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+        }
+        .user-info img {
+            width: 40px;
+            vertical-align: middle;
+        }
+        .balance-section {
+            background: #444;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 5px;
+        }
+        .balance {
+            font-size: 24px;
+            font-weight: bold;
+            color: yellow;
+        }
+        .buttons {
+            margin-top: 10px;
+        }
+
+        .button {
+            display: block;
+            width: 80%;
+            margin: 5px auto;
+            padding: 10px;
+            background: gray;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .other-services {
+            margin-top: 20px;
+        }
+        .service-button {
+            display: inline-block;
+            width: 45%;
+            margin: 5px;
+            padding: 10px;
+            background: gray;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+
+    <!-- JivoSite Live Chat -->
+    <script src="//code.jivosite.com/widget/wV6zTzxS5q" async></script>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyA7nRo1nVCaIg75JOpvh1gPy_kQ3_zQjXY",
+            authDomain: "digital-bit-6e599.firebaseapp.com",
+            projectId: "digital-bit-6e599",
+            storageBucket: "digital-bit-6e599.appspot.com",
+            messagingSenderId: "261463383888",
+            appId: "1:261463383888:web:c5cf8991d02645e6fb5655"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        // ✅ Function to Update Username from Firestore
+        function updateUsername() {
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    let username = user.displayName || "User"; // Default to "User"
+                    
+                    try {
+                        // Fetch username from Firestore
+                        const doc = await db.collection("users").doc(user.uid).get();
+                        if (doc.exists && doc.data().username) {
+                            username = doc.data().username;
+                        }
+                    } catch (error) {
+                        console.error("Error fetching username:", error);
+                    }
+
+                    document.getElementById("username").innerText = username;
+                    listenForBalanceUpdates(user.uid); // ✅ Start balance updates
+                } else {
+                    console.log("No user logged in.");
+                }
+            });
+        }
+
+        // ✅ Function to Listen for Real-Time Balance Updates
+        function listenForBalanceUpdates(userId) {
+            db.collection("users").doc(userId).onSnapshot((doc) => {
+                if (doc.exists) {
+                    const balance = doc.data().balance || 0;
+                    document.getElementById("balance").innerText = `INR ${balance.toLocaleString()}`;
+                } else {
+                    console.log("Balance data not found!");
+                }
+            }, (error) => {
+                console.error("Error listening for balance updates:", error);
+            });
+        }
+
+        // ✅ Function to Open Live Chat
+        function openLiveChat() {
+            if (window.jivo_api) {
+                jivo_api.open();
+            } else {
+                alert("Live Chat is loading, please try again in a few seconds.");
+            }
+        }
+
+        // ✅ Initialize username update on page load
+        window.onload = updateUsername;
+    </script>
 </head>
 <body>
 
-  <div class="container">
-
-    <div class="header">
-      <p class="message"></p>
-      <p class="welcome">Welcome to <strong>247 Forex Trade Fast</strong></p>
-      <p class="more"></p>
-    </div>
-
-    <div class="profile-section">
-      <div class="profile">
-        <img src="usdt-icon.png" alt="•" class="profile-img">
-        <div class="profile-info">
-          <p class="username">User: <span id="username">Loading...</span></p>
-          <p class="limit"><span class="highlight"></span></p>
-          <p class="limit"><span class="highlight"></span></p>
+    <div class="container">
+        <div class="header">Welcome to <b>Earn With Bit Digital Mining</b></div>
+        
+        <div class="user-info">
+            <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" alt="Tether" />
+            <b>Hello, <span id="username">user</span></b>
         </div>
-      </div>
-      <button class="vip-upgrade"></button>
+
+        <div class="balance-section">
+            <div class="balance" id="balance">INR 000.00</div>
+            <div>Balance</div>
+
+
+
+            <div class="buttons">
+                <button class="button" onclick="openLiveChat()">Deposit</button>
+                <button class="button" onclick="openLiveChat()">Withdraw</button>
+                <button class="button" onclick="openLiveChat()">Transfer</button>
+            </div>
+        </div>
+
+        <div class="other-services">
+            <div><b>Other Services</b></div>
+            <button class="service-button" onclick="openLiveChat()">Financing</button>
+            <button class="service-button" onclick="openLiveChat()">Wallet</button>
+            <button class="service-button" onclick="openLiveChat()">Security</button>
+            <button class="service-button" onclick="openLiveChat()">Questions</button>
+        </div>
     </div>
 
-    <div class="balance-actions">
-      <div class="balance-card">
-        <p class="balance-title"><span class="highlight">INR 69,000.00</span></p> 
-        <p class="balance-subtitle"></p>
-      </div>
-      <div class="transaction-card">
-        <button class="action-btn" onclick="deposit()">Deposit</button>
-        <button class="action-btn" onclick="withdraw()">Withdraw</button>
-        <button class="action-btn">Transfer</button>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Firebase and App Scripts -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    // Your Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyA7nRo1nVCaIg75JOpvh1gPy_kQ3_zQjXY",
-      authDomain: "digital-bit-6e599.firebaseapp.com",
-      databaseURL: "https://digital-bit-6e599-default-rtdb.firebaseio.com",
-      projectId: "digital-bit-6e599",
-      storageBucket: "digital-bit-6e599.firebasestorage.app",
-      messagingSenderId: "261463383888",
-      appId: "1:261463383888:web:c5cf8991d02645e6fb5655",
-      measurementId: "G-5D9P2PFKW4"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // Listen for auth state changes
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        try {
-          const userDocRef = doc(db, "users", user.uid);
-          const docSnapshot = await getDoc(userDocRef);
-
-          if (docSnapshot.exists()) {
-            const userData = docSnapshot.data();
-            // Update welcome message and username display
-            document.querySelector(".welcome").innerHTML = Welcome to <strong>Bit-Digital Mining</strong>, <strong>${userData.fullName}</strong>;
-            document.getElementById("username").textContent = userData.fullName;
-          } else {
-            console.log("User document not found in Firestore.");
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        }
-      } else {
-        // Redirect to login if not signed in
-        window.location.href = "login.html";
-      }
-    });
-
-    // Define deposit() and withdraw() functions
-    window.deposit = function() {
-      alert("Deposit function not implemented.");
-    };
-
-    window.withdraw = function() {
-      alert("Withdraw function not implemented.");
-    };
-  </script>
 </body>
-                                                                        </html>
+  </html>
